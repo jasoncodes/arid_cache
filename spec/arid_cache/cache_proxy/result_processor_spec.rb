@@ -342,22 +342,16 @@ describe AridCache::CacheProxy::ResultProcessor do
       # Seed the cache; it should use the serialized result in the return value.
       value = @user.cached_companies(:raw => true)
 
-      # Comparing the hashes directly doesn't work because the updated_at Time are
-      # not considered equal...don't know why, cause the to_s looks the same.
       value.should be_a(Array)
       value.first.should be_a(Hash)
-      value.first.each_pair do |k, v|
-        v.to_s.should == @company.attributes[k].to_s
-      end
+      value.first.should == @company.attributes
 
       # Cache is seeded, it should use the cached result
       dont_allow(User).hash_proxy
       value = @user.cached_companies(:raw => true)
       value.should be_a(Array)
       value.first.should be_a(Hash)
-      value.first.each_pair do |k, v|
-        v.to_s.should == @company.attributes[k].to_s
-      end
+      value.first.should == @company.attributes
     end
 
     it "should proxy out only" do
