@@ -8,8 +8,8 @@ module AridCache
       # The method we use depends on the database adapter because only MySQL
       # supports the ORDER BY FIELD() function.  For other databases we use
       # a CASE statement.
-      def order_by(ids, klass=nil)
-        column = namespaced_column(:id, klass)
+      def order_by(ids, klass)
+        column = namespaced_column(klass.primary_key, klass)
         if ids.empty?
           nil
         elsif ::ActiveRecord::Base.is_mysql_adapter?
@@ -53,7 +53,7 @@ module AridCache
             key = option_map[key] || key
             scope.send(key, pair[1])
           end
-          query = query.scoped.where(Utilities.namespaced_column(:id, klass) + ' in (?)', ids)
+          query = query.scoped.where(Utilities.namespaced_column(klass.primary_key, klass) + ' in (?)', ids)
           # Fix http://breakthebit.org/post/3487560245/rails-3-arel-count-size-length-weirdness
           query.class_eval do
             alias_method :size, :length
@@ -61,7 +61,7 @@ module AridCache
           end
           query
         else
-          klass.find_all_by_id(ids, find_opts)
+          klass.send("find_all_by_#{klass.primary_key}", ids, find_opts)
         end
       end
 

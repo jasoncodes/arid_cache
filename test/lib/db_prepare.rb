@@ -28,6 +28,10 @@ ActiveRecord::Base.silence do
     create_table "empty_user_relations", :force => true do |t|
       t.column "user_id", :integer
     end
+
+    create_table "custom_table_name", :primary_key => 'custom_pk_id', :force => true do |t|
+      t.column "name", :text
+    end
   end
 end
 

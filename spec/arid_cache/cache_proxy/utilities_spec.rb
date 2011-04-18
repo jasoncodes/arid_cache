@@ -41,4 +41,15 @@ describe AridCache::CacheProxy::Utilities do
       }.should query(0)
     end
   end
+
+  describe "find_all_by_id with custom DB names" do
+    before do
+      @custom_names = 2.times.map { CustomName.create! }
+    end
+
+    it "should return instances" do
+      @result = AridCache::CacheProxy::Utilities.find_all_by_id(CustomName, @custom_names.map(&:id))
+      @result.should == @custom_names
+    end
+  end
 end
